@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { ArrowRight, PawPrint } from "lucide-react";
 import PetCard from "./PetCard";
-import { fetchPets } from "@/lib/pets/data";
+import { fetchFeaturesPets } from "@/lib/pets/data";
 
 const FeaturedPets = async () => {
-  const pets = await fetchPets();
+  const pets = await fetchFeaturesPets();
 
   return (
     <section className="relative overflow-hidden py-24 bg-gradient-to-br from-[#FFF8F5] via-[#FDFDFD] to-[#EEF9FF]">
@@ -48,7 +48,7 @@ const FeaturedPets = async () => {
         {/* BOTTOM BUTTON */}
         <div className="flex justify-center mt-16">
           <Link
-            href="/all-pets"
+            href="/pets"
             className="px-8 h-14 rounded-full border border-slate-200 bg-white text-slate-800 font-semibold flex items-center gap-3 hover:bg-slate-50 transition shadow-md"
           >
             Explore All Pets
