@@ -3,7 +3,7 @@ import { MapPin, ShieldCheck, Heart, PawPrint } from "lucide-react";
 import AdoptionForm from "@/components/AdoptionForm";
 
 const fetchSinglePet = async (id) => {
-  const res = await fetch(`${process.env.NEXT_CLIENT_API_URL}/pets/${id}`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/pets/${id}`, {
     cache: "no-store",
   });
 
