@@ -1,6 +1,4 @@
-import { PawPrint } from "lucide-react";
 import Link from "next/link";
-
 import React from "react";
 import { FaPlus } from "react-icons/fa";
 import { FaClover } from "react-icons/fa6";
