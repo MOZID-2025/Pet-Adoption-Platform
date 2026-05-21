@@ -1,5 +1,4 @@
 import { MapPin, ShieldCheck, Heart, PawPrint } from "lucide-react";
-
 import AdoptionForm from "@/components/AdoptionForm";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
