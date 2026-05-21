@@ -38,14 +38,12 @@ export default function Login() {
     });
 
     setLoading(false);
-
     if (error) {
       toast.error("Login failed");
       return;
     }
 
     toast.success("Login successful");
-
     router.push("/");
   };
   return (
@@ -66,8 +64,6 @@ export default function Login() {
             type="email"
             name="email"
             placeholder="Email Address"
-            // value={form.email}
-            // onChange={handleChange}
             required
             className="w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 outline-none transition"
           />
@@ -79,8 +75,6 @@ export default function Login() {
               type={showPassword ? "text" : "password"}
               name="password"
               placeholder="Password"
-              // value={form.password}
-              // onChange={handleChange}
               required
               className="w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-purple-500 outline-none transition"
             />
