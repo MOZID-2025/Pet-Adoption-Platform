@@ -1,21 +1,29 @@
 import { MapPin, ShieldCheck, Heart, PawPrint } from "lucide-react";
 
 import AdoptionForm from "@/components/AdoptionForm";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
-const fetchSinglePet = async (id) => {
+const fetchSinglePet = async (id, token) => {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/pets/${id}`, {
     cache: "no-store",
+    headers: {
+      authorization: token || "",
+    },
   });
 
   const data = await res.json();
-
   return data || {};
 };
 
 export default async function PetDetails({ params }) {
   const { id } = await params;
 
-  const pet = await fetchSinglePet(id);
+  const { token } = await auth.api.getToken({
+    headers: await headers(),
+  });
+  console.log(token);
+  const pet = await fetchSinglePet(id, token);
 
   return (
     <section className="py-24 bg-gradient-to-r from-[#FFF1F3] via-[#FDFDFD] to-[#F3FCFF] min-h-screen">
