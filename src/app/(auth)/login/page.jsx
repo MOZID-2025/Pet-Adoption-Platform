@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 // Better Auth Client
-import { signIn } from "@/lib/auth-client";
+import { authClient, signIn } from "@/lib/auth-client";
 import { FcGoogle } from "react-icons/fc";
 
 export default function Login() {
@@ -17,7 +17,10 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
 
   const handleGoogleLogin = async () => {
-    toast("Google login coming soon");
+    await authClient.signIn.social({
+      provider: "google",
+    });
+    toast("Google login successful");
   };
 
   const handleLogin = async (e) => {

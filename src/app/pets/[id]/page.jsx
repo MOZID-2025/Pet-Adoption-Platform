@@ -22,7 +22,7 @@ export default async function PetDetails({ params }) {
   const { token } = await auth.api.getToken({
     headers: await headers(),
   });
-  console.log(token);
+
   const pet = await fetchSinglePet(id, token);
 
   return (
