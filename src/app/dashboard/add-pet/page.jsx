@@ -3,24 +3,17 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-
 import { MdDocumentScanner } from "react-icons/md";
 import Link from "next/link";
 import { FaPlus } from "react-icons/fa";
 import { FaClover } from "react-icons/fa6";
-
-// Better Auth
 import { authClient } from "@/lib/auth-client";
 
 const AddPet = () => {
   const router = useRouter();
-
   const [loading, setLoading] = useState(false);
-
-  // Logged in user
   const { data: session, isPending } = authClient.useSession();
 
-  // Loading state
   if (isPending) {
     return (
       <div className="min-h-screen flex justify-center items-center">
@@ -34,9 +27,7 @@ const AddPet = () => {
     return (
       <div className="min-h-screen flex flex-col justify-center items-center gap-4">
         <h2 className="text-3xl font-bold">Unauthorized Access</h2>
-
         <p>Please login first.</p>
-
         <Link href="/login" className="btn btn-primary">
           Go To Login
         </Link>
@@ -48,11 +39,9 @@ const AddPet = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     setLoading(true);
 
     const form = e.target;
-
     const petData = {
       petName: form.petName.value,
       species: form.species.value,
@@ -82,9 +71,7 @@ const AddPet = () => {
 
       if (data.insertedId) {
         toast.success("Pet Added Successfully!");
-
         form.reset();
-
         router.push("/dashboard/my-listing");
       } else {
         toast.error("Failed to Add Pet");
