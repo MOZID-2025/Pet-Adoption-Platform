@@ -1,61 +1,38 @@
 "use client";
 
 import { useState } from "react";
-
 import Link from "next/link";
-
 import { CalendarDays, PawPrint, CheckCircle2 } from "lucide-react";
-
 import { toast } from "react-hot-toast";
-
 import { authClient } from "@/lib/auth-client";
 
 const AdoptionForm = ({ pet }) => {
   const { data: session } = authClient.useSession();
-
   const [pickupDate, setPickupDate] = useState("");
-
   const [message, setMessage] = useState("");
-
   const [submitted, setSubmitted] = useState(false);
-
   const [loading, setLoading] = useState(false);
-
   const userName = session?.user?.name;
-
   const userEmail = session?.user?.email;
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // LOGIN CHECK
     if (!session?.user) {
       toast.error("Please Login First");
-
       return;
     }
 
     setLoading(true);
-
     const adoptionData = {
       petId: pet?._id,
-
       petName: pet?.petName,
-
       petImage: pet?.image,
-
       ownerEmail: pet?.ownerEmail,
-
       userName,
-
       userEmail,
-
       pickupDate,
-
       message,
-
       status: "pending",
-
       requestDate: new Date(),
     };
 
@@ -66,7 +43,6 @@ const AdoptionForm = ({ pet }) => {
         headers: {
           "Content-Type": "application/json",
         },
-
         body: JSON.stringify(adoptionData),
       });
 
@@ -74,7 +50,6 @@ const AdoptionForm = ({ pet }) => {
 
       if (data.insertedId) {
         toast.success("Adoption Request Submitted");
-
         setSubmitted(true);
       }
     } catch (error) {
@@ -86,7 +61,6 @@ const AdoptionForm = ({ pet }) => {
     }
   };
 
-  // SUCCESS UI
   if (submitted) {
     return (
       <div className="bg-[#07132F] text-white rounded-[35px] p-10 shadow-2xl flex flex-col items-center justify-center text-center min-h-[550px]">
