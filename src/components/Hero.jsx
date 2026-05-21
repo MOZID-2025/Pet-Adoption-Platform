@@ -56,7 +56,7 @@ const Hero = () => {
             {/* BUTTONS */}
             <div className="flex flex-wrap items-center gap-5">
               <Link
-                href="/all-pets"
+                href={"/pets"}
                 className="group inline-flex items-center gap-3 px-8 h-14 rounded-full bg-gradient-to-r from-pink-500 to-cyan-500 text-white font-semibold shadow-xl hover:scale-105 transition-all duration-300"
               >
                 Adopt Now
@@ -64,7 +64,7 @@ const Hero = () => {
               </Link>
 
               <Link
-                href="/add-pet"
+                href="/dashboard"
                 className="inline-flex items-center gap-3 px-8 h-14 rounded-full bg-white border border-slate-200 text-slate-700 font-semibold hover:bg-slate-50 transition shadow-sm"
               >
                 List a Pet

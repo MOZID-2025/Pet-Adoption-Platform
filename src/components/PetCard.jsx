@@ -1,12 +1,9 @@
 import {
   ArrowRight,
   Heart,
-  HeartPulse,
-  Mail,
   MapPin,
   PawPrint,
   ShieldCheck,
-  Syringe,
   User,
 } from "lucide-react";
 import Link from "next/link";
@@ -107,30 +104,6 @@ const PetCard = ({ pet }) => {
 
               <p className="font-bold text-slate-800">{pet.gender}</p>
             </div>
-
-            {/* <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100">
-              <div className="flex items-center gap-2 mb-1">
-                <HeartPulse className="w-4 h-4 text-red-500" />
-                <p className="text-xs font-semibold text-slate-500 uppercase">
-                  Health
-                </p>
-              </div>
-
-              <p className="font-bold text-slate-800">{pet.healthStatus}</p>
-            </div> */}
-
-            {/* <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100">
-              <div className="flex items-center gap-2 mb-1">
-                <Syringe className="w-4 h-4 text-violet-500" />
-                <p className="text-xs font-semibold text-slate-500 uppercase">
-                  Vaccine
-                </p>
-              </div>
-
-              <p className="font-bold text-slate-800">
-                {pet.vaccinationStatus}
-              </p>
-            </div> */}
           </div>
 
           {/* LOCATION + PRICE */}
@@ -149,34 +122,26 @@ const PetCard = ({ pet }) => {
             </div>
           </div>
 
-          {/* DESCRIPTION
-          <div className="bg-white border border-slate-100 rounded-2xl p-4 shadow-sm">
-            <p className="text-sm leading-7 text-slate-600">
-              {pet.description}
-            </p>
-          </div> */}
-
-          {/* OWNER */}
-          {/* <div className="flex items-center gap-3 bg-slate-50 rounded-2xl p-4 border border-slate-100">
-            <div className="w-11 h-11 rounded-full bg-cyan-100 flex items-center justify-center">
-              <Mail className="w-5 h-5 text-cyan-600" />
-            </div>
-
-            <div>
-              <p className="text-xs text-slate-500">Owner Contact</p>
-
-              <p className="font-semibold text-slate-800">{pet.ownerEmail}</p>
-            </div>
-          </div> */}
-
           {/* BUTTON */}
-          <Link
-            href={`/pets/${pet._id}`}
-            className={`group h-14 rounded-2xl bg-gradient-to-r ${pet.color} flex items-center justify-center gap-3  font-bold shadow-lg hover:scale-[1.02] hover:shadow-2xl transition-all duration-300`}
-          >
-            View Details
-            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-          </Link>
+          <div className="grid grid-cols-2 gap-4">
+            {/* VIEW DETAILS BUTTON */}
+            <Link
+              href={`/pets/${pet._id}`}
+              className={`group h-14 rounded-2xl bg-gradient-to-r ${pet.color} flex items-center justify-center gap-3 font-bold shadow-lg hover:scale-[1.02] hover:shadow-2xl transition-all duration-300`}
+            >
+              View Details
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </Link>
+
+            {/* ADOPT NOW BUTTON */}
+            <Link
+              href={`/pets/${pet._id}`}
+              className={`group h-14 rounded-2xl bg-gradient-to-r ${pet.color} flex items-center justify-center gap-3 font-bold shadow-lg hover:scale-[1.02] hover:shadow-2xl transition-all duration-300`}
+            >
+              Adopt Now
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
         </div>
       </div>
     </div>

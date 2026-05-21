@@ -7,79 +7,44 @@ import toast from "react-hot-toast";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 // Better Auth Client
-import { authClient } from "@/lib/auth-client";
+import { signIn } from "@/lib/auth-client";
 import { FcGoogle } from "react-icons/fc";
 
 export default function Login() {
   const router = useRouter();
 
   const [showPassword, setShowPassword] = useState(false);
-
   const [loading, setLoading] = useState(false);
 
-  const [form, setForm] = useState({
-    email: "",
-    password: "",
-  });
-
-  // Handle Input Change
-  const handleChange = (e) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,
-    });
+  const handleGoogleLogin = async () => {
+    toast("Google login coming soon");
   };
 
-  // Email Login
-  const handleSubmit = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
-    if (!form.email || !form.password) {
-      toast.error("Email and password are required");
+    setLoading(true);
+
+    const formData = new FormData(e.currentTarget);
+
+    const loginData = Object.fromEntries(formData.entries());
+
+    const { error } = await signIn.email({
+      ...loginData,
+      callbackURL: "/",
+    });
+
+    setLoading(false);
+
+    if (error) {
+      toast.error("Login failed");
       return;
     }
 
-    try {
-      setLoading(true);
+    toast.success("Login successful");
 
-      const { error } = await authClient.signIn.email({
-        email: form.email,
-        password: form.password,
-      });
-
-      if (error) {
-        toast.error(error.message || "Invalid credentials");
-        return;
-      }
-
-      toast.success("Login successful!");
-
-      setTimeout(() => {
-        router.push("/");
-      }, 1000);
-    } catch (err) {
-      toast.error(err.message || "Something went wrong");
-    } finally {
-      setLoading(false);
-    }
+    router.push("/");
   };
-
-  // Google Login
-  const handleGoogleLogin = async () => {
-    try {
-      setLoading(true);
-
-      await authClient.signIn.social({
-        provider: "google",
-        callbackURL: "/",
-      });
-    } catch (err) {
-      toast.error(err.message || "Google login failed");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-pink-500 to-cyan-500 p-4">
       <div className="w-full max-w-md bg-white/90 backdrop-blur-lg rounded-3xl shadow-2xl p-8 border border-white/20">
@@ -91,15 +56,15 @@ export default function Login() {
         <p className="text-center text-gray-500 mb-6">Login to continue</p>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleLogin} className="space-y-4">
           <label>Email :</label>
           {/* Email */}
           <input
             type="email"
             name="email"
             placeholder="Email Address"
-            value={form.email}
-            onChange={handleChange}
+            // value={form.email}
+            // onChange={handleChange}
             required
             className="w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 outline-none transition"
           />
@@ -111,8 +76,8 @@ export default function Login() {
               type={showPassword ? "text" : "password"}
               name="password"
               placeholder="Password"
-              value={form.password}
-              onChange={handleChange}
+              // value={form.password}
+              // onChange={handleChange}
               required
               className="w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-purple-500 outline-none transition"
             />

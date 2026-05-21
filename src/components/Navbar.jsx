@@ -15,7 +15,6 @@ import {
   LayoutDashboard,
   LogOut,
 } from "lucide-react";
-import ThemeToggle from "./ThemeToggle";
 
 const Navbar = () => {
   const pathname = usePathname();
