@@ -8,7 +8,6 @@ import { authClient } from "@/lib/auth-client";
 
 import {
   Moon,
-  Search,
   LogIn,
   Menu,
   PawPrint,
@@ -141,7 +140,7 @@ const Navbar = () => {
                   {/* DASHBOARD */}
                   <li>
                     <Link
-                      href="/dashboard"
+                      href="/dashboard/my-request"
                       className="flex items-center gap-3 px-5 py-4 hover:bg-gray-100 text-gray-700"
                     >
                       <LayoutDashboard size={18} />

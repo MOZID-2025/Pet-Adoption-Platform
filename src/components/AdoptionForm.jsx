@@ -1,33 +1,89 @@
 "use client";
 
 import { useState } from "react";
+
+import Link from "next/link";
+
 import { CalendarDays, PawPrint, CheckCircle2 } from "lucide-react";
+
 import { toast } from "react-hot-toast";
 
+import { authClient } from "@/lib/auth-client";
+
 const AdoptionForm = ({ pet }) => {
+  const { data: session } = authClient.useSession();
+
   const [pickupDate, setPickupDate] = useState("");
+
   const [message, setMessage] = useState("");
+
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e) => {
+  const [loading, setLoading] = useState(false);
+
+  const userName = session?.user?.name;
+
+  const userEmail = session?.user?.email;
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // LOGIN CHECK
+    if (!session?.user) {
+      toast.error("Please Login First");
+
+      return;
+    }
+
+    setLoading(true);
 
     const adoptionData = {
       petId: pet?._id,
+
       petName: pet?.petName,
-      userName: "John Doe",
-      userEmail: "john@example.com",
+
+      petImage: pet?.image,
+
+      ownerEmail: pet?.ownerEmail,
+
+      userName,
+
+      userEmail,
+
       pickupDate,
+
       message,
+
       status: "pending",
+
+      requestDate: new Date(),
     };
 
-    console.log(adoptionData);
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/requests`, {
+        method: "POST",
 
-    toast.success("Adoption Request Submitted");
+        headers: {
+          "Content-Type": "application/json",
+        },
 
-    // HIDE FORM
-    setSubmitted(true);
+        body: JSON.stringify(adoptionData),
+      });
+
+      const data = await res.json();
+
+      if (data.insertedId) {
+        toast.success("Adoption Request Submitted");
+
+        setSubmitted(true);
+      }
+    } catch (error) {
+      console.log(error);
+
+      toast.error("Submission Failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   // SUCCESS UI
@@ -46,14 +102,16 @@ const AdoptionForm = ({ pet }) => {
         <p className="text-slate-300 leading-8 max-w-md text-lg">
           Your adoption request for
           <span className="text-cyan-400 font-bold"> {pet?.petName}</span> has
-          been sent successfully. You can track the request status in your
-          dashboard.
+          been sent successfully.
         </p>
 
         {/* BUTTON */}
-        <button className="mt-10 px-8 h-14 rounded-2xl bg-gradient-to-r from-pink-500 via-violet-500 to-cyan-500 text-white font-bold shadow-lg hover:scale-105 transition-all duration-300">
+        <Link
+          href="/dashboard/my-request"
+          className="mt-10 px-8 h-14 rounded-2xl bg-gradient-to-r from-pink-500 via-violet-500 to-cyan-500 text-white font-bold shadow-lg hover:scale-105 transition-all duration-300 flex items-center"
+        >
           View My Requests
-        </button>
+        </Link>
       </div>
     );
   }
@@ -101,7 +159,7 @@ const AdoptionForm = ({ pet }) => {
 
           <input
             type="text"
-            value="John Doe"
+            value={userName || ""}
             readOnly
             className="w-full h-14 rounded-2xl border border-slate-200 bg-slate-100 px-5 outline-none"
           />
@@ -115,7 +173,7 @@ const AdoptionForm = ({ pet }) => {
 
           <input
             type="email"
-            value="john@example.com"
+            value={userEmail || ""}
             readOnly
             className="w-full h-14 rounded-2xl border border-slate-200 bg-slate-100 px-5 outline-none"
           />
@@ -157,10 +215,11 @@ const AdoptionForm = ({ pet }) => {
 
         {/* BUTTON */}
         <button
+          disabled={loading}
           type="submit"
           className="w-full h-16 rounded-2xl bg-gradient-to-r from-pink-500 via-violet-500 to-cyan-500 text-white font-bold text-lg shadow-xl hover:scale-[1.02] transition-all duration-300"
         >
-          Send Adoption Request
+          {loading ? "Submitting..." : "Send Adoption Request"}
         </button>
 
         {/* STATUS */}

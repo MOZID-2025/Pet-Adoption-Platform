@@ -8,7 +8,7 @@ const fetchSinglePet = async (id, token) => {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/pets/${id}`, {
     cache: "no-store",
     headers: {
-      authorization: token || "",
+      authorization: `Bearer ${token}` || "",
     },
   });
 
