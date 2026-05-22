@@ -1,15 +1,9 @@
-import Link from "next/link";
 import { ArrowRight, PawPrint } from "lucide-react";
 import PetCard from "@/components/PetCard";
 import { fetchPets } from "@/lib/pets/data";
-import PetFilter from "@/components/PetFilter";
 
-const pets = async ({ searchParams }) => {
-  const search = searchParams?.search || "";
-  const species = searchParams?.species || "";
-  const sort = searchParams?.sort || "";
-
-  const petsData = await fetchPets({ search, species, sort });
+const pets = async ({}) => {
+  const petsData = await fetchPets();
 
   return (
     <section className="relative overflow-hidden py-24 bg-gradient-to-br from-[#FFF8F5] via-[#FDFDFD] to-[#EEF9FF]">
@@ -45,7 +39,6 @@ const pets = async ({ searchParams }) => {
         <h1 className="font-bold text-2xl mb-4">
           {petsData.length} Available Pet
         </h1>
-        <PetFilter />
 
         {/* GRID */}
         <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-8">
