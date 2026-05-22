@@ -7,8 +7,7 @@ import toast from "react-hot-toast";
 
 import { authClient } from "@/lib/auth-client";
 
-import { FaClover } from "react-icons/fa6";
-import { FaPlus } from "react-icons/fa";
+import { FaClover, FaPlus } from "react-icons/fa6";
 import { MdDocumentScanner } from "react-icons/md";
 
 const MyListing = () => {
@@ -21,7 +20,7 @@ const MyListing = () => {
 
   const ownerEmail = session?.user?.email;
 
-  // Fetch My Pets
+  // FETCH MY PETS
   useEffect(() => {
     if (!ownerEmail) return;
 
@@ -44,7 +43,7 @@ const MyListing = () => {
     fetchMyPets();
   }, [ownerEmail]);
 
-  // Loading State
+  // LOADING
   if (isPending) {
     return (
       <div className="min-h-screen flex justify-center items-center">
@@ -53,10 +52,10 @@ const MyListing = () => {
     );
   }
 
-  // Unauthorized
+  // UNAUTHORIZED
   if (!session?.user) {
     return (
-      <div className="min-h-screen flex justify-center items-center flex-col gap-4">
+      <div className="min-h-screen flex flex-col justify-center items-center gap-4">
         <h2 className="text-3xl font-bold">Unauthorized Access</h2>
 
         <Link href="/login" className="btn btn-primary">
@@ -66,9 +65,9 @@ const MyListing = () => {
     );
   }
 
-  // Delete Pet
+  // DELETE PET
   const handleDelete = async (id) => {
-    const confirmDelete = confirm("Are you sure you want to delete?");
+    const confirmDelete = confirm("Are you sure you want to delete this pet?");
 
     if (!confirmDelete) return;
 
@@ -88,11 +87,12 @@ const MyListing = () => {
       }
     } catch (error) {
       console.log(error);
+
       toast.error("Delete Failed");
     }
   };
 
-  // Approve Request
+  // APPROVE REQUEST
   const handleApprove = async (requestId) => {
     try {
       const res = await fetch(
@@ -112,14 +112,23 @@ const MyListing = () => {
 
       if (data.modifiedCount > 0) {
         toast.success("Request Approved");
+
+        const updatedRequests = selectedRequests.map((request) =>
+          request._id === requestId
+            ? { ...request, status: "approved" }
+            : request,
+        );
+
+        setSelectedRequests(updatedRequests);
       }
     } catch (error) {
       console.log(error);
+
       toast.error("Approve Failed");
     }
   };
 
-  // Reject Request
+  // REJECT REQUEST
   const handleReject = async (requestId) => {
     try {
       const res = await fetch(
@@ -139,14 +148,23 @@ const MyListing = () => {
 
       if (data.modifiedCount > 0) {
         toast.success("Request Rejected");
+
+        const updatedRequests = selectedRequests.map((request) =>
+          request._id === requestId
+            ? { ...request, status: "rejected" }
+            : request,
+        );
+
+        setSelectedRequests(updatedRequests);
       }
     } catch (error) {
       console.log(error);
+
       toast.error("Reject Failed");
     }
   };
 
-  // Stats
+  // STATS
   const totalListings = pets.length;
 
   const availablePets = pets.filter((pet) => pet.status !== "adopted").length;
@@ -160,11 +178,11 @@ const MyListing = () => {
       {/* CONTENT */}
       <div className="drawer-content">
         {/* NAVBAR */}
-        <nav className="navbar w-full bg-base-300">
+        <nav className="navbar w-full bg-base-200 border-b border-base-300">
           <label
             htmlFor="my-drawer-4"
             aria-label="open sidebar"
-            className="btn btn-square btn-ghost"
+            className="btn btn-square btn-ghost lg:hidden"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -184,33 +202,54 @@ const MyListing = () => {
             </svg>
           </label>
 
-          <div className="px-4 font-bold">PetNest Dashboard</div>
+          <div className="px-4 font-bold text-lg">PetNest Dashboard</div>
         </nav>
 
         {/* PAGE */}
         <div className="p-6">
           {/* TITLE */}
-          <div className="mb-8">
-            <h2 className="text-4xl font-bold">My Listings</h2>
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-10">
+            <div>
+              <p className="text-sm text-pink-500 font-medium mb-2">
+                My Dashboard
+              </p>
 
-            <p className="text-gray-500 mt-2">Manage your listed pets</p>
+              <h2 className="text-4xl font-bold">
+                My{" "}
+                <span className="bg-gradient-to-r from-pink-500 to-cyan-400 bg-clip-text text-transparent">
+                  Listings
+                </span>
+              </h2>
+
+              <p className="text-gray-500 mt-2">
+                Manage your pet listings and adoption requests.
+              </p>
+            </div>
+
+            <Link
+              href="/dashboard/add-pet"
+              className="btn bg-gradient-to-r from-pink-500 to-cyan-400 text-white border-none rounded-full"
+            >
+              <FaPlus />
+              Add New Pet
+            </Link>
           </div>
 
           {/* STATS */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-10">
-            <div className="bg-base-200 rounded-2xl p-6">
+            <div className="bg-base-200 rounded-2xl p-6 shadow-sm">
               <h3 className="text-lg font-semibold">Total Listings</h3>
 
               <p className="text-4xl font-bold mt-2">{totalListings}</p>
             </div>
 
-            <div className="bg-base-200 rounded-2xl p-6">
+            <div className="bg-base-200 rounded-2xl p-6 shadow-sm">
               <h3 className="text-lg font-semibold">Available</h3>
 
               <p className="text-4xl font-bold mt-2">{availablePets}</p>
             </div>
 
-            <div className="bg-base-200 rounded-2xl p-6">
+            <div className="bg-base-200 rounded-2xl p-6 shadow-sm">
               <h3 className="text-lg font-semibold">Adopted</h3>
 
               <p className="text-4xl font-bold mt-2">{adoptedPets}</p>
@@ -219,78 +258,105 @@ const MyListing = () => {
 
           {/* LOADING */}
           {loading ? (
-            <div className="flex justify-center">
+            <div className="flex justify-center py-20">
               <span className="loading loading-spinner loading-lg"></span>
             </div>
           ) : (
             <>
-              {/* PET CARDS */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {pets.map((pet) => (
-                  <div key={pet._id} className="card bg-base-200 shadow-xl">
-                    <figure className="h-60 relative">
-                      <Image
-                        src={pet.image}
-                        alt={pet.petName}
-                        fill
-                        className="object-cover"
-                      />
-                    </figure>
+              {/* EMPTY STATE */}
+              {pets.length === 0 ? (
+                <div className="border border-base-300 rounded-3xl py-24 flex flex-col items-center justify-center text-center bg-base-100">
+                  <div className="text-6xl mb-4">🐾</div>
 
-                    <div className="card-body">
-                      <h2 className="card-title">{pet.petName}</h2>
+                  <h2 className="text-3xl font-bold mb-3">No listings yet</h2>
 
-                      <p className="font-semibold">${pet.adoptionFee}</p>
+                  <p className="text-gray-500 mb-6">
+                    Start by adding a pet that needs a new home.
+                  </p>
 
-                      <div className="flex flex-wrap gap-2 mt-4">
-                        {/* REQUESTS */}
-                        <button
-                          className="btn btn-sm btn-primary"
-                          onClick={() => {
-                            setSelectedRequests(pet.requests || []);
-
-                            document
-                              .getElementById("request_modal")
-                              .showModal();
-                          }}
-                        >
-                          Requests
-                        </button>
-
-                        {/* EDIT */}
-                        <Link
-                          href={`/dashboard/update-pet/${pet._id}`}
-                          className="btn btn-sm btn-info"
-                        >
-                          Edit
-                        </Link>
-
-                        {/* VIEW */}
-                        <Link
-                          href={`/pets/${pet._id}`}
-                          className="btn btn-sm btn-success"
-                        >
-                          View
-                        </Link>
-
-                        {/* DELETE */}
-                        <button
-                          onClick={() => handleDelete(pet._id)}
-                          className="btn btn-sm btn-error"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* EMPTY */}
-              {pets.length === 0 && (
-                <div className="text-center mt-16">
-                  <h2 className="text-3xl font-bold">No Pets Found</h2>
+                  <Link
+                    href="/dashboard/add-pet"
+                    className="btn bg-gradient-to-r from-pink-500 to-cyan-400 text-white border-none rounded-full px-6"
+                  >
+                    <FaPlus />
+                    Add Your First Pet
+                  </Link>
                 </div>
+              ) : (
+                <>
+                  {/* PET CARDS */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {pets.map((pet) => (
+                      <div
+                        key={pet._id}
+                        className="card bg-base-100 shadow-xl border border-base-300"
+                      >
+                        <figure className="relative h-60">
+                          <Image
+                            src={pet.image}
+                            alt={pet.petName}
+                            fill
+                            className="object-cover"
+                          />
+                        </figure>
+
+                        <div className="card-body">
+                          <div className="flex items-center justify-between">
+                            <h2 className="card-title">{pet.petName}</h2>
+
+                            <div className="badge badge-success text-white">
+                              {pet.status || "available"}
+                            </div>
+                          </div>
+
+                          <p className="text-lg font-bold text-primary">
+                            ${pet.adoptionFee}
+                          </p>
+
+                          <div className="flex flex-wrap gap-2 mt-4">
+                            {/* REQUESTS */}
+                            <button
+                              className="btn btn-sm btn-primary"
+                              onClick={() => {
+                                setSelectedRequests(pet.requests || []);
+
+                                document
+                                  .getElementById("request_modal")
+                                  .showModal();
+                              }}
+                            >
+                              Requests
+                            </button>
+
+                            {/* EDIT */}
+                            <Link
+                              href={`/dashboard/update-pet/${pet._id}`}
+                              className="btn btn-sm btn-info text-white"
+                            >
+                              Edit
+                            </Link>
+
+                            {/* VIEW */}
+                            <Link
+                              href={`/pets/${pet._id}`}
+                              className="btn btn-sm btn-success text-white"
+                            >
+                              View
+                            </Link>
+
+                            {/* DELETE */}
+                            <button
+                              onClick={() => handleDelete(pet._id)}
+                              className="btn btn-sm btn-error text-white"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </>
               )}
             </>
           )}
@@ -305,10 +371,13 @@ const MyListing = () => {
               ) : (
                 <div className="space-y-5">
                   {selectedRequests.map((request) => (
-                    <div key={request._id} className="border p-4 rounded-xl">
+                    <div
+                      key={request._id}
+                      className="border border-base-300 p-5 rounded-2xl"
+                    >
                       <h2 className="font-bold text-lg">{request.userName}</h2>
 
-                      <p>{request.userEmail}</p>
+                      <p className="text-gray-500">{request.userEmail}</p>
 
                       <p className="mt-2">Pickup Date: {request.pickupDate}</p>
 
@@ -316,19 +385,19 @@ const MyListing = () => {
                         Status: {request.status || "pending"}
                       </p>
 
-                      {/* ACTIONS */}
+                      {/* ACTION BUTTONS */}
                       {!request.status && (
                         <div className="flex gap-3 mt-4">
                           <button
                             onClick={() => handleApprove(request._id)}
-                            className="btn btn-success btn-sm"
+                            className="btn btn-success btn-sm text-white"
                           >
                             Approve
                           </button>
 
                           <button
                             onClick={() => handleReject(request._id)}
-                            className="btn btn-error btn-sm"
+                            className="btn btn-error btn-sm text-white"
                           >
                             Reject
                           </button>
@@ -350,49 +419,37 @@ const MyListing = () => {
       </div>
 
       {/* SIDEBAR */}
-      <div className="drawer-side is-drawer-close:overflow-visible">
+      <div className="drawer-side">
         <label
           htmlFor="my-drawer-4"
           aria-label="close sidebar"
           className="drawer-overlay"
         ></label>
 
-        <div className="flex min-h-full flex-col items-start bg-base-200 is-drawer-close:w-14 is-drawer-open:w-64">
-          <ul className="menu w-full grow">
-            <li>Menu</li>
+        <div className="flex min-h-full flex-col bg-base-200 w-64 border-r border-base-300">
+          <div className="p-6 border-b border-base-300">
+            <h2 className="text-2xl font-bold">PetNest</h2>
+          </div>
 
+          <ul className="menu w-full p-4 gap-2">
             <li>
-              <Link
-                href="/dashboard/my-request"
-                className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-                data-tip="add-pet"
-              >
+              <Link href="/dashboard/my-request" className="rounded-xl">
                 <MdDocumentScanner />
-                <span className="is-drawer-close:hidden">My Request</span>
+                My Request
               </Link>
             </li>
 
             <li>
-              <Link
-                href="/dashboard/add-pet"
-                className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-                data-tip="add-pet"
-              >
+              <Link href="/dashboard/add-pet" className="rounded-xl">
                 <FaPlus />
-
-                <span className="is-drawer-close:hidden">Add Pet</span>
+                Add Pet
               </Link>
             </li>
 
             <li>
-              <Link
-                href="/dashboard/my-listing"
-                className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-                data-tip="my-listing"
-              >
+              <Link href="/dashboard/my-listing" className="rounded-xl active">
                 <FaClover />
-
-                <span className="is-drawer-close:hidden">My Listing</span>
+                My Listing
               </Link>
             </li>
           </ul>
