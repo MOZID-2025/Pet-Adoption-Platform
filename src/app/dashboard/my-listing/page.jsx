@@ -20,6 +20,14 @@ const MyListing = () => {
 
   const ownerEmail = session?.user?.email;
 
+  const [selectedPet, setSelectedPet] = useState(null);
+
+  const [updateForm, setUpdateForm] = useState({
+    petName: "",
+    adoptionFee: "",
+    status: "",
+  });
+
   // FETCH MY PETS
   useEffect(() => {
     if (!ownerEmail) return;
@@ -164,6 +172,42 @@ const MyListing = () => {
     }
   };
 
+  // UPDATE PET
+  const handleUpdatePet = async (e) => {
+    e.preventDefault();
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/pets/${selectedPet._id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updateForm),
+        },
+      );
+
+      const data = await res.json();
+
+      if (data.modifiedCount > 0) {
+        toast.success("Pet Updated Successfully");
+
+        const updatedPets = pets.map((pet) =>
+          pet._id === selectedPet._id ? { ...pet, ...updateForm } : pet,
+        );
+
+        setPets(updatedPets);
+
+        document.getElementById("edit_modal").close();
+      }
+    } catch (error) {
+      console.log(error);
+
+      toast.error("Update Failed");
+    }
+  };
+
   // STATS
   const totalListings = pets.length;
 
@@ -179,29 +223,6 @@ const MyListing = () => {
       <div className="drawer-content">
         {/* NAVBAR */}
         <nav className="navbar w-full bg-base-200 border-b border-base-300">
-          <label
-            htmlFor="my-drawer-4"
-            aria-label="open sidebar"
-            className="btn btn-square btn-ghost lg:hidden"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              strokeLinejoin="round"
-              strokeLinecap="round"
-              strokeWidth="2"
-              fill="none"
-              stroke="currentColor"
-              className="size-5"
-            >
-              <path d="M4 4m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"></path>
-
-              <path d="M9 4v16"></path>
-
-              <path d="M14 10l2 2l-2 2"></path>
-            </svg>
-          </label>
-
           <div className="px-4 font-bold text-lg">PetNest Dashboard</div>
         </nav>
 
@@ -329,12 +350,24 @@ const MyListing = () => {
                             </button>
 
                             {/* EDIT */}
-                            <Link
-                              href={`/dashboard/update-pet/${pet._id}`}
+                            <button
                               className="btn btn-sm btn-info text-white"
+                              onClick={() => {
+                                setSelectedPet(pet);
+
+                                setUpdateForm({
+                                  petName: pet.petName,
+                                  adoptionFee: pet.adoptionFee,
+                                  status: pet.status || "available",
+                                });
+
+                                document
+                                  .getElementById("edit_modal")
+                                  .showModal();
+                              }}
                             >
                               Edit
-                            </Link>
+                            </button>
 
                             {/* VIEW */}
                             <Link
@@ -415,6 +448,96 @@ const MyListing = () => {
               </div>
             </div>
           </dialog>
+
+          {/* EDIT MODAL */}
+          <dialog id="edit_modal" className="modal">
+            <div className="modal-box max-w-2xl">
+              <h3 className="font-bold text-2xl mb-6">Update Pet</h3>
+
+              <form onSubmit={handleUpdatePet} className="space-y-5">
+                {/* PET NAME */}
+                <div>
+                  <label className="label">
+                    <span className="label-text font-semibold">Pet Name</span>
+                  </label>
+
+                  <input
+                    type="text"
+                    value={updateForm.petName}
+                    onChange={(e) =>
+                      setUpdateForm({
+                        ...updateForm,
+                        petName: e.target.value,
+                      })
+                    }
+                    className="input input-bordered w-full"
+                    required
+                  />
+                </div>
+
+                {/* ADOPTION FEE */}
+                <div>
+                  <label className="label">
+                    <span className="label-text font-semibold">
+                      Adoption Fee
+                    </span>
+                  </label>
+
+                  <input
+                    type="number"
+                    value={updateForm.adoptionFee}
+                    onChange={(e) =>
+                      setUpdateForm({
+                        ...updateForm,
+                        adoptionFee: e.target.value,
+                      })
+                    }
+                    className="input input-bordered w-full"
+                    required
+                  />
+                </div>
+
+                {/* STATUS */}
+                <div>
+                  <label className="label">
+                    <span className="label-text font-semibold">Status</span>
+                  </label>
+
+                  <select
+                    value={updateForm.status}
+                    onChange={(e) =>
+                      setUpdateForm({
+                        ...updateForm,
+                        status: e.target.value,
+                      })
+                    }
+                    className="select select-bordered w-full"
+                  >
+                    <option value="available">Available</option>
+
+                    <option value="adopted">Adopted</option>
+                  </select>
+                </div>
+
+                {/* BUTTONS */}
+                <div className="flex justify-end gap-3 pt-4">
+                  <button
+                    type="button"
+                    className="btn"
+                    onClick={() =>
+                      document.getElementById("edit_modal").close()
+                    }
+                  >
+                    Cancel
+                  </button>
+
+                  <button type="submit" className="btn btn-primary">
+                    Update Pet
+                  </button>
+                </div>
+              </form>
+            </div>
+          </dialog>
         </div>
       </div>
 
@@ -427,11 +550,8 @@ const MyListing = () => {
         ></label>
 
         <div className="flex min-h-full flex-col bg-base-200 w-64 border-r border-base-300">
-          <div className="p-6 border-b border-base-300">
-            <h2 className="text-2xl font-bold">PetNest</h2>
-          </div>
-
           <ul className="menu w-full p-4 gap-2">
+            <li className="font-bold text-lg mb-2">Menu</li>
             <li>
               <Link href="/dashboard/my-request" className="rounded-xl">
                 <MdDocumentScanner />

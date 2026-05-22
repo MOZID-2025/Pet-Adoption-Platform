@@ -225,7 +225,7 @@ const MyRequest = () => {
 
         <div className="flex min-h-full flex-col items-start bg-base-200 is-drawer-close:w-14 is-drawer-open:w-64">
           <ul className="menu w-full grow">
-            <li>Menu</li>
+            <li className="font-bold text-lg mb-2">Menu</li>
 
             {/* MY REQUEST */}
             <li>
